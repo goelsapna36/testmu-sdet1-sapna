@@ -53,7 +53,7 @@ These credentials are for this local demo only. The app is not production authen
 - `prompts.md`: prompts to record exactly as sent to the LLM. Proposed prompts are labelled as not yet sent; update honestly as you run them.
 - `test-cases/`: place saved generated cases here.
 - `ai-usage-log.md`: record AI tools and verification status.
-- `utils/failure-explainer.ts`: actual OpenAI API integration code.
+- `utils/failure-explainer.ts`: actual gemini API integration code.
 
 ## What I'd build next
 1. Automatically trigger the Failure Explainer from a Playwright reporter after real failures.
