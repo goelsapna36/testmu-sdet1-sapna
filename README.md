@@ -1,59 +1,77 @@
-# TestMu AI SDET-1 — AI-Assisted QA Starter
+# TestMu AI SDET-1 — Playwright + Gemini
 
-This repository is a small local demonstration for the TestMu AI SDET-1 assessment. It uses Playwright + TypeScript to test a local Login/Dashboard web app and REST API, and includes an OpenAI-powered Failure Explainer.
+## Overview
+
+A local demo QA automation project using Playwright,
+TypeScript, REST API tests, and Google Gemini for
+AI-assisted failure explanation.
 
 ## Requirements
-- Node.js 20+ recommended
+
+- Node.js
 - npm
-- OpenAI API key with API access and quota (only needed for the real LLM test)
+- Google Gemini API key with available model access and quota
 
 ## Setup
-```bash
-npm install
-npx playwright install chromium
-cp .env.example .env
-```
-Edit `.env` locally and set `OPENAI_API_KEY`. Never commit `.env`.
 
-## Run the tests
-```bash
-npm test
-```
-Playwright starts the local app automatically at `http://127.0.0.1:4173`. The HTML report is generated under `playwright-report/`.
+1. Install dependencies:
 
-To see the browser:
-```bash
-npm run test:headed
-```
+   npm install
 
-To open the report:
-```bash
-npm run test:report
-```
+2. Install Chromium:
 
-To run only the real OpenAI integration test, use:
-```bash
-npx playwright test tests/login/login.spec.ts -g "failure explainer"
-```
-Without `OPENAI_API_KEY`, the integration test is skipped rather than faking an LLM response. With a valid key and quota, it calls the OpenAI Responses API, attaches the response to the test, and writes `test-results/ai-failure-explanation.md`.
+   npx playwright install chromium
+
+3. Copy .env.example to .env.
+
+4. Add your Gemini API key to .env:
+
+   GEMINI_API_KEY=your_key_here
+   GEMINI_MODEL=gemini-3.8-flash
+
+Never commit your .env file.
+
+## Run all tests
+
+   npm test
+
+## Run TypeScript check
+
+   npm run typecheck
+
+## Run Gemini integration test
+
+   npx playwright test tests/login/login.spec.ts --grep "failure explainer integration"
 
 ## Demo credentials
-- Email: `qa@example.com`
-- Password: `Passw0rd!`
 
-These credentials are for this local demo only. The app is not production authentication and must not be exposed publicly.
+Email: qa@example.com
+Password: Passw0rd!
 
-## Scope and honest limitations
-- Implemented: UI login success/failure, dashboard widgets/filter/logout, login API, authenticated widgets API, and a single-user lookup endpoint.
-- Not implemented: real password reset delivery, account lockout/brute-force protection, dashboard role permissions, full CRUD, rate limiting, and deliberate 5xx simulation. These are documented assessment gaps, not passing tests.
-- The Failure Explainer sends a controlled failure-evidence example to the real OpenAI API. It does not automatically explain every failed test yet; production hardening would add a reporter hook that safely collects real failure context, redacts secrets, retries safely, and handles API errors.
-- API key is required for the real LLM call. API billing/quota is separate from ChatGPT subscription access.
+These credentials are only for the local demo application.
+
+## Implemented
+
+- Login success and invalid-login tests
+- Dashboard widget filter and logout tests
+- REST API authentication and basic response tests
+- Real Gemini API integration for failure explanation
+- LLM response attached to a Playwright test result
+
+## Known limitations
+
+- Forgot-password flow and brute-force lockout are not implemented.
+- Session expiry and permission-based dashboard tests need expansion.
+- Full CRUD, rate limiting, schema validation coverage,
+  and deliberate 5xx simulation remain incomplete.
+- The AI integration currently analyzes controlled failure
+  evidence; it does not automatically explain every failed test.
 
 ## Assessment artifacts
 - `prompts.md`: prompts to record exactly as sent to the LLM. Proposed prompts are labelled as not yet sent; update honestly as you run them.
 - `test-cases/`: place saved generated cases here.
 - `ai-usage-log.md`: record AI tools and verification status.
-- `utils/failure-explainer.ts`: actual gemini API integration code.
+- `utils/failure-explainer.ts`: actual OpenAI API integration code.
 
 ## What I'd build next
 1. Automatically trigger the Failure Explainer from a Playwright reporter after real failures.
