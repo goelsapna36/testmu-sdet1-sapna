@@ -11,7 +11,9 @@ export type FailureInput = {
   pageText?: string;
 };
 
-export async function explainFailure(input: FailureInput): Promise<string> {
+export async function explainFailure(
+  input: FailureInput
+): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -20,29 +22,30 @@ export async function explainFailure(input: FailureInput): Promise<string> {
     );
   }
 
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const model =
+    process.env.GEMINI_MODEL || "gemini-3.8-flash";
+
   const ai = new GoogleGenAI({ apiKey });
 
   const response = await ai.models.generateContent({
     model,
     contents: [
-      "You are a cautious senior QA engineer helping triage an automated test failure.",
+      "You are a cautious senior QA engineer helping analyze an automated test failure.",
       "Use only the supplied evidence. Do not claim certainty when evidence is insufficient.",
-      "Return sections: Likely explanation, Evidence, Suggested next checks, Suggested fix.",
+      "Return these sections: Likely explanation, Evidence, Suggested next checks, Suggested fix.",
       "Never request secrets or include credentials in your response.",
       "Analyze this failure input:",
       JSON.stringify(input),
     ].join("\n\n"),
   });
 
-  const text = response.text || "The model returned no text.";
+  const explanation =
+    response.text || "The model returned no text.";
 
   const outputDir = path.resolve("test-results");
   fs.mkdirSync(outputDir, { recursive: true });
 
-  fs.writeFileSync(
-    path.join(outputDir, "ai-failure-explanation.md"),
-    `# AI Failure Explainer Output
+  const report = `# AI Failure Explainer Output
 
 **Provider:** Google Gemini
 
@@ -56,10 +59,14 @@ ${JSON.stringify(input, null, 2)}
 
 **LLM response:**
 
-${text}
-`,
+${explanation}
+`;
+
+  fs.writeFileSync(
+    path.join(outputDir, "ai-failure-explanation.md"),
+    report,
     "utf8"
   );
 
-  return text;
+  return explanation;
 }
