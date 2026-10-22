@@ -1,0 +1,26 @@
+{
+  "name": "testmu-sdet1-sapna",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-assisted SDET assessment starter: Playwright, REST API, OpenAI failure explainer",
+  "scripts": {
+    "app": "tsx app/server.ts",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.15.30",
+    "express": "^5.1.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@google/genai": "^2.30.0",
+    "dotenv": "^16.6.1",
+    "openai": "^5.12.2"
+  }
+}

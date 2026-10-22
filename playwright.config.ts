@@ -1,0 +1,22 @@
+import { defineConfig, devices } from "@playwright/test";
+import "dotenv/config";
+
+export default defineConfig({
+  testDir: "./tests",
+  fullyParallel: false,
+  reporter: [["list"], ["html", { outputFolder: "playwright-report", open: "never" }]],
+  use: {
+    baseURL: process.env.BASE_URL || "http://127.0.0.1:4173",
+    trace: "retain-on-failure",
+    screenshot: "only-on-failure",
+  },
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } }
+  ],
+  webServer: {
+    command: "npm run app",
+    url: "http://127.0.0.1:4173/health",
+    reuseExistingServer: !process.env.CI,
+    timeout: 15_000,
+  },
+});
