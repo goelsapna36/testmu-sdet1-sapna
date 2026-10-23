@@ -1,14 +1,18 @@
 # AI Usage Log
 
-| AI Tool | Purpose | Output | Verification |
+| AI tool | Purpose | Output | Verification / limitation |
 |---|---|---|---|
-| ChatGPT | Project planning, code guidance, debugging and documentation support. | Playwright + TypeScript starter project and troubleshooting guidance. | Local test suite reported 10 passed. |
-| Google Gemini API | Analyzed controlled test-failure evidence through the Failure Explainer. | Actual LLM response attached to a Playwright test and saved locally in test-results/ai-failure-explanation.md. | Integration test passed locally; full suite reported 10 passed. |
-| OpenAI API | Initially attempted for the Failure Explainer. | No successful response obtained because the account had $0.00 API credit. | Replaced with Google Gemini. |
+| ChatGPT | Assisted planning, authoring, debugging, test coverage review, and documentation for the Playwright + TypeScript assessment. | Starter code, scenario catalogue, and test scripts/documentation. | Original local suite was reported as 10 passed before the additional coverage pack. Run the updated suite after applying this patch. |
+| Google Gemini API | Called by `utils/failure-explainer.ts` to analyze a controlled test-failure evidence object. | Actual LLM response attached to a Playwright test and written locally to `test-results/ai-failure-explanation.md` and `artifacts/ai-failure-explanation.md`. | The author reported a successful integration test and 10 passing tests before expanded tests were added. Re-run to verify the final suite. Model access and quota can vary. |
+| OpenAI API | Initially attempted for the Failure Explainer. | No successful response was obtained because the account returned a no-credit 429 error. | Replaced with Google Gemini; OpenAI is not the active provider. |
 
-## Notes
+## Initial problems and changes
 
-- The active LLM provider is Google Gemini.
-- The author reported 10 passing Playwright tests in the local environment.
-- API availability and quotas can vary.
-- The local .env file and API keys must never be committed.
+- A Dashboard heading locator originally matched more than one heading; changing to an exact heading locator fixed the strict-mode error.
+- The OpenAI API returned a 429 no-credit response, so the implementation was switched to Google Gemini.
+- The first Gemini model setting returned a 404 availability error for this account; after updating the local model setting, the author reported the integration test passed.
+- The initial suite reported 10 passed. Additional login, dashboard, and API tests in this patch must be re-run before claiming their results.
+
+## Security
+
+Never commit `.env`, API keys, or real credentials. Review `artifacts/ai-failure-explanation.md` for sensitive data before committing it. The local demo credentials in the README are for this demo only.

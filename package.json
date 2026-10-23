@@ -2,7 +2,7 @@
   "name": "testmu-sdet1-sapna",
   "version": "1.0.0",
   "private": true,
-  "description": "AI-assisted SDET assessment starter: Playwright, REST API, OpenAI failure explainer",
+  "description": "AI-assisted SDET assessment demo: Playwright, TypeScript, REST API tests, Gemini failure explainer",
   "scripts": {
     "app": "tsx app/server.ts",
     "test": "playwright test",

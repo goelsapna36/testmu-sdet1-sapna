@@ -1,4 +1,3 @@
-
 import { test, expect } from "@playwright/test";
 import { explainFailure } from "../../utils/failure-explainer";
 
@@ -11,7 +10,6 @@ test("valid login opens dashboard", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Dashboard", exact: true })
   ).toBeVisible();
-
   await expect(page.locator("#welcome")).toContainText("qa@example.com");
 });
 
@@ -24,12 +22,34 @@ test("invalid login shows an error", async ({ page }) => {
   await expect(page.getByRole("alert")).toHaveText(
     "Invalid email or password"
   );
+  await expect(page.locator("#dashboard")).toBeHidden();
+});
+
+test("empty email is blocked by required-field validation", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel("Email").fill("");
+  await page.getByRole("button", { name: "Sign in" }).click();
+
+  const emailHasRequiredError = await page
+    .locator("#email")
+    .evaluate((element: HTMLInputElement) => element.validity.valueMissing);
+  expect(emailHasRequiredError).toBe(true);
+  await expect(page.locator("#dashboard")).toBeHidden();
+});
+
+test("forgot password shows a neutral confirmation", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Forgot password?" }).click();
+
+  await expect(page.getByRole("alert")).toContainText(
+    "Password reset instructions would be sent if the account exists."
+  );
+  await expect(page.locator("#login")).toBeVisible();
 });
 
 test(
   "failure explainer integration can analyze a real assertion failure",
   async ({ page }, testInfo) => {
-    // Skip only when the Gemini API key is not configured.
     if (!process.env.GEMINI_API_KEY) {
       test.skip(
         true,
@@ -38,7 +58,6 @@ test(
     }
 
     await page.goto("/");
-
     const evidence = {
       testTitle: "Dashboard heading expected but not visible",
       errorMessage:
@@ -47,16 +66,11 @@ test(
       pageText: (await page.locator("body").innerText()).slice(0, 1500),
     };
 
-    // Make a real Gemini API call through the failure explainer.
     const explanation = await explainFailure(evidence);
-
-    // Attach the actual LLM response to the Playwright test result.
     await testInfo.attach("ai-failure-explanation.md", {
       body: explanation,
       contentType: "text/markdown",
     });
-
-    // Save evidence that the LLM returned a useful response.
     expect(explanation.length).toBeGreaterThan(20);
   }
 );
